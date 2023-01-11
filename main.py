@@ -9,17 +9,30 @@ from config import TOKEN
 bot = telebot.TeleBot(TOKEN)
 
 
-def gen_markup():
-    markup = InlineKeyboardMarkup()
-    markup.row_width = 2
-    markup.add(InlineKeyboardButton(text='colored', url='https://blitz.plus/sites/default/files/styles/original_with_watermark/public/image/2022-06/jpg/maykl-dzhekson_3.jpg?itok=68UCKH4B'),
-                               InlineKeyboardButton(text='blacknwhite', url='https://cdn.ananasposter.ru/image/cache/catalog/poster/music/81/19552-1000x830.jpg'))
-    return markup
+def gen_markup(command):
+    if command == 'In':
+        markup = InlineKeyboardMarkup()
+        markup.row_width = 2
+        markup.add(InlineKeyboardButton(text='colored', url='https://blitz.plus/sites/default/files/styles/original_with_watermark/public/image/2022-06/jpg/maykl-dzhekson_3.jpg?itok=68UCKH4B'),
+                                   InlineKeyboardButton(text='blacknwhite', url='https://cdn.ananasposter.ru/image/cache/catalog/poster/music/81/19552-1000x830.jpg'))
+        return markup
+    elif command == 'chats':
+        markup = InlineKeyboardMarkup(row_width=2)
+        markup.row_width = 2
+        markup.add(InlineKeyboardButton(text='Помощь', url='https://t.me/+lKT7PQQgSyRhNDc6'))
+        return markup
+
+
+
+
+@bot.message_handler(commands=['chats'])
+def chat_message(message):
+    bot.send_message(message.chat.id, 'На данный момент доступны следующие чаты', reply_markup=gen_markup('chats'))
 
 
 @bot.message_handler(commands=['In'])
 def send_message_with_in_kb(message):
-    bot.send_message(message.chat.id, 'blacknwhite or colored?', reply_markup=gen_markup())
+    bot.send_message(message.chat.id, 'blacknwhite or colored?', reply_markup=gen_markup('In'))
 
 
 @bot.message_handler(commands=['help'])
@@ -29,7 +42,7 @@ def help1(message):
 
 
 def answer_back(message):
-    bot.send_message(message.chat.id, 'уверены?')
+    bot.send_message(message.chat.id, 'Напишите команду /func и узнайте о функционале бота')
 
 
 def make_new_keyboard():
@@ -75,15 +88,7 @@ def send_blackorwhite(message):
 @bot.message_handler(func=lambda message:True)
 def answer_ques(message):
     if message.text == 'Да':
-        bot.send_message(message.chat.id, '1 секунду', reply_markup=gen_markup())
-    elif message.text == 'Нет':
-        bot.send_message(message.chat.id, 'решайте проблему сами')
-
-
-@bot.message_handler(func=lambda message:True)
-def answer_ques(message):
-    if message.text == 'Да':
-        bot.send_message(message.chat.id, '1 секунду', reply_markup=gen_markup())
+        bot.send_message(message.chat.id, '1 секунду', reply_markup=gen_markup('In'))
     elif message.text == 'Нет':
         bot.send_message(message.chat.id, 'решайте проблему сами')
 
