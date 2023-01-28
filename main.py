@@ -8,6 +8,12 @@ from config import TOKEN
 
 bot = telebot.TeleBot(TOKEN)
 
+commands = {
+    '/start': "Начало работы бота",
+    '/chats': "Группа новостей",
+    '/In': "Майкл Джексон"
+}
+
 
 def gen_markup(command):
     if command == 'In':
@@ -23,8 +29,6 @@ def gen_markup(command):
         return markup
 
 
-
-
 @bot.message_handler(commands=['chats'])
 def chat_message(message):
     bot.send_message(message.chat.id, 'На данный момент доступны следующие чаты', reply_markup=gen_markup('chats'))
@@ -36,9 +40,11 @@ def send_message_with_in_kb(message):
 
 
 @bot.message_handler(commands=['help'])
-def help1(message):
-    msg = bot.send_message(message.chat.id, 'Вам чем-то помочь?')
-    bot.register_next_step_handler(msg, answer_back)
+def help(message):
+    text = 'Список доступных команд:\n'
+    for cmd in commands:
+        text += cmd + '-' + commands[cmd] + '\n'
+    bot.send_message(message.chat.id, text)
 
 
 def answer_back(message):
@@ -91,8 +97,6 @@ def answer_ques(message):
         bot.send_message(message.chat.id, '1 секунду', reply_markup=gen_markup('In'))
     elif message.text == 'Нет':
         bot.send_message(message.chat.id, 'решайте проблему сами')
-
-
 
 
 bot.infinity_polling()
