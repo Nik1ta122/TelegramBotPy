@@ -6,7 +6,7 @@ from datetime import date, datetime, timedelta
 import re
 
 
-def get_school_news():
+def get_school_news(period=7):
     url = 'https://sch1448.mskobr.ru/novosti'
     response = requests.get(url).text
 
@@ -22,7 +22,7 @@ def get_school_news():
         post_birthday = post.find('div', class_='kris-news-data-txt').text.strip()
         post_birthday = datetime.strptime(post_birthday, "%d.%m.%Y").date()
 
-        if post_birthday > today - timedelta(days=7):
+        if post_birthday > today - timedelta(days=period):
             title = post.find('div', class_='h3').text.strip()
 
             text = post.find('p').text.strip()[:100]
@@ -38,15 +38,16 @@ def get_school_news():
             else:
                 img_url = 'https://na-zapade-mos.ru/files/data/user/AiF/' + \
                           'olga.k/files/2020/2021.06.21-1624286593.4332_2021.06.21-1624279282.1772-dscf4762.jpg'
+            img_bytes = requests.get(img_url, 'wb').content
 
             post_url = post.find('a', class_='link_more').get('href')
             post_url = 'https://sch1448.mskobr.ru' + post_url
 
             one_post_info = {
-                'data': post_birthday,
+                'date': post_birthday.strftime("%d.%m.%Y"),
                 'title': title,
                 'text': text,
-                'img_url': img_url,
+                'img_bytes': img_bytes,
                 'post_url': post_url
             }
             last_news_list.append(one_post_info)
